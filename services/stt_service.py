@@ -1,4 +1,5 @@
 import os
+import whisper
 from config.settings import logger
 
 class STTService:
@@ -7,17 +8,20 @@ class STTService:
 
     def _lazy_init(self):
         if self.model is None:
-            from faster_whisper import WhisperModel
-            logger.info("Carregando modelo Faster-Whisper...")
-            self.model = WhisperModel("tiny", device="cpu", compute_type="int8")
+            logger.info("A carregar o modelo OpenAI Whisper...")
+            self.model = whisper.load_model("tiny")
 
     def transcrever_audio(self, audio_path: str) -> str:
         try:
             if not os.path.exists(audio_path):
                 return "Arquivo de áudio não encontrado."
+            
             self._lazy_init()
-            segments, info = self.model.transcribe(audio_path, beam_size=5)
-            transcricao = "".join([segment.text for segment in segments])
+            
+            # O OpenAI Whisper devolve um dicionário com o texto direto
+            result = self.model.transcribe(audio_path)
+            transcricao = result.get("text", "")
+            
             return transcricao.strip()
         except Exception as e:
             logger.error(f"Erro na transcrição de áudio: {str(e)}")
