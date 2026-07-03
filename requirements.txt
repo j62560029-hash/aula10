@@ -6,6 +6,6 @@ SQLAlchemy==2.0.28
 alembic==1.13.1
 psycopg[binary]==3.1.18
 python-dotenv==1.0.1
-faster-whisper==1.0.1
+openai-whisper
 pandas==2.2.1
 plotly==5.19.0
